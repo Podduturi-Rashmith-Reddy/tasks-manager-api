@@ -9,7 +9,7 @@ import (
 
 // CreateTask handles the POST request to add a new task
 func CreateTask(w http.ResponseWriter, r *http.Request) {
-	// Ensure method is POST
+	// Ensure the request is a POST method
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -25,7 +25,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Call business logic to insert task
-	taskID, err := bizlogic.CreateTask(task)
+	taskID, err := bizlogic.CreateTaskLogic(task)
 	if err != nil {
 		http.Error(w, "Error creating task", http.StatusInternalServerError)
 		return

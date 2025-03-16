@@ -7,7 +7,7 @@ import (
 )
 
 // CreateTask inserts a new task into the database
-func CreateTask(task models.Task) (int, error) {
+func CreateTaskLogic(task models.Task) (int, error) {
 	query := "INSERT INTO tasks (title, description, due_date, status) VALUES (?, ?, ?, ?)"
 
 	stmt, err := database.DB.Prepare(query)
