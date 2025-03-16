@@ -1,13 +1,18 @@
 package bizlogic
 
 import (
+	"log"
 	"tasks-manager-api/database"
 	"tasks-manager-api/models"
 )
 
+// GetTasks retrieves all tasks from the database
 func GetTasksLogic() ([]models.Task, error) {
-	rows, err := database.DB.Query("SELECT id, title, description, due_date, status FROM tasks")
+	query := "SELECT id, title, description, due_date, status FROM tasks"
+
+	rows, err := database.DB.Query(query)
 	if err != nil {
+		log.Printf("Error fetching tasks: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -15,11 +20,12 @@ func GetTasksLogic() ([]models.Task, error) {
 	var tasks []models.Task
 	for rows.Next() {
 		var task models.Task
-		err := rows.Scan(&task.ID, &task.Title, &task.Description, &task.DueDate, &task.Status)
-		if err != nil {
+		if err := rows.Scan(&task.ID, &task.Title, &task.Description, &task.DueDate, &task.Status); err != nil {
+			log.Printf("Error scanning task row: %v", err)
 			return nil, err
 		}
 		tasks = append(tasks, task)
 	}
+
 	return tasks, nil
 }

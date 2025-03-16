@@ -1,16 +1,36 @@
 package bizlogic
 
-import "tasks-manager-api/model"
+import (
+	"database/sql"
+	"log"
+	"tasks-manager-api/database"
+)
 
-// tasks is an in-memory map to store tasks.
-var tasks = make(map[int]model.Task)
+// DeleteTask removes a task from the database
+func DeleteTask(id int) error {
+	query := "DELETE FROM tasks WHERE id = ?"
 
-// DeleteTask deletes a task by its ID.
-// Returns true if the task was deleted, false if the task was not found.
-func DeleteTask(id int) bool {
-	if _, exists := tasks[id]; !exists {
-		return false // Task not found
+	stmt, err := database.DB.Prepare(query)
+	if err != nil {
+		log.Printf("Error preparing delete statement: %v", err)
+		return err
 	}
-	delete(tasks, id)
-	return true // Task deleted successfully
+	defer stmt.Close()
+
+	result, err := stmt.Exec(id)
+	if err != nil {
+		log.Printf("Error executing delete statement: %v", err)
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Error getting rows affected: %v", err)
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows // Return an error if no task was deleted
+	}
+
+	return nil
 }
