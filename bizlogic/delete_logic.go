@@ -1,16 +1,23 @@
 package bizlogic
 
-import "tasks-manager-api/model"
+import (
+	"fmt"
+	"net/http"
+	"tasks-manager-api/database"
+)
 
-// tasks is an in-memory map to store tasks.
-var tasks = make(map[int]model.Task)
+func DeleteTaskLogic(w http.ResponseWriter, r *http.Request, taskID string) error {
+	// Prepare the SQL query to delete a task by its ID
+	query := "DELETE FROM tasks WHERE id=?"
 
-// DeleteTask deletes a task by its ID.
-// Returns true if the task was deleted, false if the task was not found.
-func DeleteTask(id int) bool {
-	if _, exists := tasks[id]; !exists {
-		return false // Task not found
+	// Ensure taskID is converted to an appropriate type (e.g., int)
+	_, err := database.DB.Exec(query, taskID)
+	if err != nil {
+		return fmt.Errorf("could not delete task: %v", err)
 	}
-	delete(tasks, id)
-	return true // Task deleted successfully
+
+	// Send back a success response
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Task deleted successfully"))
+	return nil
 }

@@ -2,27 +2,26 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
-
 	"tasks-manager-api/bizlogic"
+
+	"github.com/gorilla/mux" // For URL parameter handling
 )
-// DeleteTask deletes a task.
+
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
-	// Extract the task ID from the URL path
-	idStr := r.URL.Path[len("/tasks/"):]
-	id, err := strconv.Atoi(idStr)
+	// Retrieve the task ID from the URL parameter
+	vars := mux.Vars(r)
+	taskID := vars["id"]
+
+	// Make sure taskID is not empty
+	if taskID == "" {
+		http.Error(w, "Task ID is required", http.StatusBadRequest)
+		return
+	}
+
+	// Call the business logic function with the task ID
+	err := bizlogic.DeleteTaskLogic(w, r, taskID)
 	if err != nil {
-		http.Error(w, "Invalid task ID", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// Call the bizlogic to delete the task
-	deleted := bizlogic.DeleteTask(id)
-	if !deleted {
-		http.Error(w, "Task not found", http.StatusNotFound)
-		return
-	}
-
-	// Return a 404 No Content response
-	w.WriteHeader(http.StatusNoContent)
 }
