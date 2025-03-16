@@ -21,9 +21,12 @@ func main() {
 
 	// Register API endpoints
 
-	r.HandleFunc("/tasks", controllers.CreateTask).Methods("POST") // Create a new task
+	r.HandleFunc("/tasks", controllers.GetTasks).Methods("GET")
+	r.HandleFunc("/tasks", controllers.CreateTasks).Methods("GET")
+	r.HandleFunc("/tasks", controllers.DeleteTasks).Methods("GET")
+	r.HandleFunc("/tasks", controllers.UpdateTasks).Methods("GET")
 
 	// Start the server
-	fmt.Println("Server started on port 8082...")
-	log.Fatal(http.ListenAndServe(":8082", r))
+	fmt.Println("Server started on port 8085...")
+	log.Fatal(http.ListenAndServe(":8085", r))
 }
