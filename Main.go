@@ -20,12 +20,13 @@ func main() {
 	r := mux.NewRouter()
 
 	// Register API endpoints
-	r.HandleFunc("/tasks", controllers.GetTasks).Methods("GET")           // Retrieve all tasks
-	r.HandleFunc("/tasks", controllers.CreateTask).Methods("POST")        // Create a new task
-	r.HandleFunc("/tasks/{id}", controllers.UpdateTask).Methods("PUT")    // Update an existing task (including status)
-	r.HandleFunc("/tasks/{id}", controllers.DeleteTask).Methods("DELETE") // Mark a task as deleted (update status)
+
+	r.HandleFunc("/tasks", controllers.GetTasks).Methods("GET")
+	r.HandleFunc("/tasks", controllers.CreateTasks).Methods("GET")
+	r.HandleFunc("/tasks", controllers.DeleteTasks).Methods("GET")
+	r.HandleFunc("/tasks", controllers.UpdateTasks).Methods("GET")
 
 	// Start the server
-	fmt.Println("Server started on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	fmt.Println("Server started on port 8085...")
+	log.Fatal(http.ListenAndServe(":8085", r))
 }
